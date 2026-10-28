@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un artiste{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card shadow border-0 rounded-4">
+
+                    <div class="card-header bg-primary text-white p-4 rounded-top-4">
+                        <h3 class="mb-0">Ajouter un artiste</h3>
+                        <p class="mb-0 mt-2">Renseignez les informations du nouvel artiste.</p>
+                    </div>
+
+                    <div class="card-body p-4">
+
+                        {{ include('artiste/_form.html.twig') }}
+
+                        <div class="mt-4">
+                            <a href="{{ path('app_artiste_index') }}"
+                               class="btn btn-outline-secondary w-100">
+                                Retour à la liste
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
