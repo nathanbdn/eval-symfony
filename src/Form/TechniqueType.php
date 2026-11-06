@@ -17,8 +17,9 @@ class TechniqueType extends AbstractType
             ->add('nom')
             ->add('oeuvres', EntityType::class, [
                 'class' => Oeuvre::class,
-                'choice_label' => 'id',
+                'choice_label' => 'titre',
                 'multiple' => true,
+                'required' => false,
             ])
         ;
     }

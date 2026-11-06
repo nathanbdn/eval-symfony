@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/lieu')]
 final class LieuController extends AbstractController
@@ -23,6 +24,7 @@ final class LieuController extends AbstractController
     }
 
     #[Route('/new', name: 'app_lieu_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $lieu = new Lieu();
@@ -51,6 +53,7 @@ final class LieuController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_lieu_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Lieu $lieu, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(LieuType::class, $lieu);
@@ -69,6 +72,7 @@ final class LieuController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_lieu_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Lieu $lieu, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$lieu->getId(), $request->getPayload()->getString('_token'))) {

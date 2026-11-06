@@ -3,11 +3,10 @@
 {% block title %}Edit Oeuvre{% endblock %}
 
 {% block body %}
-    <h1>Edit Oeuvre</h1>
+    <h1>Modifier une Oeuvre</h1>
 
-    {{ include('oeuvre/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('oeuvre/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 
-    <a href="{{ path('app_oeuvre_index') }}">back to list</a>
+    <a class="btn btn-primary" href="{{ path('app_oeuvre_index') }}">Retour à la liste</a>
 
-    {{ include('oeuvre/_delete_form.html.twig') }}
 {% endblock %}

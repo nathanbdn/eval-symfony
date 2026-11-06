@@ -16,7 +16,7 @@
                 <td>{{ artiste.pseudonyme }}</td>
             </tr>
             <tr>
-                <th>NomReel</th>
+                <th>Nom</th>
                 <td>{{ artiste.nomReel }}</td>
             </tr>
             <tr>
@@ -30,9 +30,14 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_artiste_index') }}">back to list</a>
+    <a class="btn btn-primary" href="{{ path('app_artiste_index') }}">Retour à la liste</a>
 
-    <a href="{{ path('app_artiste_edit', {'id': artiste.id}) }}">edit</a>
+    {% if is_granted('ROLE_USER') %}
+
+    <a class="btn btn-warning" href="{{ path('app_artiste_edit', {'id': artiste.id}) }}">Modifier</a>
 
     {{ include('artiste/_delete_form.html.twig') }}
+
+    {% endif %}
+
 {% endblock %}

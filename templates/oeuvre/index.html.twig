@@ -1,41 +1,69 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Oeuvre index{% endblock %}
+{% block title %}Œuvres{% endblock %}
 
 {% block body %}
-    <h1>Oeuvre index</h1>
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Œuvres</h1>
+            {% if is_granted('ROLE_USER') %}
+                <a class="btn btn-success" href="{{ path('app_oeuvre_new') }}">Ajouter une œuvre</a>
+            {% endif %}
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titre</th>
-                <th>DateCreation</th>
-                <th>Description</th>
-                <th>DateDestruction</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for oeuvre in oeuvres %}
-            <tr>
-                <td>{{ oeuvre.id }}</td>
-                <td>{{ oeuvre.titre }}</td>
-                <td>{{ oeuvre.dateCreation ? oeuvre.dateCreation|date('Y-m-d') : '' }}</td>
-                <td>{{ oeuvre.description }}</td>
-                <td>{{ oeuvre.dateDestruction ? oeuvre.dateDestruction|date('Y-m-d') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_oeuvre_show', {'id': oeuvre.id}) }}">show</a>
-                    <a href="{{ path('app_oeuvre_edit', {'id': oeuvre.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+            {% for oeuvre in oeuvres %}
+                {% set photos = oeuvre.photos|sort((a, b) => b.id <=> a.id) %}
+                {% set photo = photos|first %}
+                <div class="card h-100">
+                    {% if photo %}
+                        <img src="{{ asset('photos/' ~ photo.nomFichier) }}"
+                             class="card-img-top"
+                             alt="{{ oeuvre.titre }}"
+                             style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center"
+                             style="height: 200px; background: #e9ecef; color: #6c757d;">
+                            Pas de photo
+                        </div>
+                    {% endif %}
 
-    <a href="{{ path('app_oeuvre_new') }}">Create new</a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ oeuvre.titre }}</h5>
+
+                        <p class="card-text mb-1">
+                            📍 {{ oeuvre.lieu }}
+                        </p>
+                        {% if oeuvre.artistes|length > 0 %}
+                            <p class="card-text mb-1">🎨 {{ oeuvre.artistes|join(', ') }}</p>
+                        {% endif %}
+                        {% if oeuvre.techniques|length > 0 %}
+                            <p class="card-text mb-1">🖌️ {{ oeuvre.techniques|join(', ') }}</p>
+                        {% endif %}
+                        <p class="card-text mb-2">
+                            📅 {{ oeuvre.dateCreation ? oeuvre.dateCreation|date('d/m/Y') : 'Date inconnue' }}
+                            {% if oeuvre.dateDestruction %}
+                                <br>⚠️ Détruite le {{ oeuvre.dateDestruction|date('d/m/Y') }}
+                            {% endif %}
+                        </p>
+
+                        {% if oeuvre.description %}
+                            <p class="card-text text-muted">
+                                {{ oeuvre.description|length > 100 ? oeuvre.description|slice(0, 100) ~ '…' : oeuvre.description }}
+                            </p>
+                        {% endif %}
+
+                        <div class="mt-auto d-flex gap-2">
+                            <a class="btn btn-primary" href="{{ path('app_oeuvre_show', {'id': oeuvre.id}) }}">Voir</a>
+                            {% if is_granted('ROLE_USER') %}
+                                <a class="btn btn-warninga" href="{{ path('app_oeuvre_edit', {'id': oeuvre.id}) }}">Modifier</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p style="grid-column: 1 / -1;">Aucune œuvre pour l'instant.</p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

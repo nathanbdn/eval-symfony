@@ -3,9 +3,9 @@
 {% block title %}New Technique{% endblock %}
 
 {% block body %}
-    <h1>Create new Technique</h1>
+    <h1>Ajouter une Technique</h1>
 
     {{ include('technique/_form.html.twig') }}
 
-    <a href="{{ path('app_technique_index') }}">back to list</a>
+    <a class="btn btn-primary" href="{{ path('app_technique_index') }}">Retour à la liste</a>
 {% endblock %}

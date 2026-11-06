@@ -10,11 +10,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+
 
 #[Route('/oeuvre')]
 final class OeuvreController extends AbstractController
 {
-    #[Route(name: 'app_oeuvre_index', methods: ['GET'])]
+    #[Route('/oeuvre', name: 'app_oeuvre_index', methods: ['GET'])]
     public function index(OeuvreRepository $oeuvreRepository): Response
     {
         return $this->render('oeuvre/index.html.twig', [
@@ -23,6 +26,7 @@ final class OeuvreController extends AbstractController
     }
 
     #[Route('/new', name: 'app_oeuvre_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $oeuvre = new Oeuvre();
@@ -51,6 +55,7 @@ final class OeuvreController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_oeuvre_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Oeuvre $oeuvre, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(OeuvreType::class, $oeuvre);
@@ -69,6 +74,7 @@ final class OeuvreController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_oeuvre_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Oeuvre $oeuvre, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$oeuvre->getId(), $request->getPayload()->getString('_token'))) {

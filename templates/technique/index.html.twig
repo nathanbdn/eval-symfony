@@ -1,35 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Technique index{% endblock %}
+{% block title %}Techniques{% endblock %}
 
 {% block body %}
-    <h1>Technique index</h1>
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Techniques</h1>
+            {% if is_granted('ROLE_USER') %}
+                <a class="btn btn-primary" href="{{ path('app_technique_new') }}">Ajouter une technique</a>
+            {% endif %}
+        </div>
 
-    <table class="table">
-        <thead>
+        <table class="table">
+            <thead>
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for technique in techniques %}
-            <tr>
-                <td>{{ technique.id }}</td>
-                <td>{{ technique.nom }}</td>
-                <td>
-                    <a href="{{ path('app_technique_show', {'id': technique.id}) }}">show</a>
-                    <a href="{{ path('app_technique_edit', {'id': technique.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_technique_new') }}">Create new</a>
+            </thead>
+            <tbody>
+            {% for technique in techniques %}
+                <tr>
+                    <td>{{ technique.nom }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{{ path('app_technique_show', {'id': technique.id}) }}">Voir</a>
+                        {% if is_granted('ROLE_USER') %}
+                            <a class="btn btn-secondary" href="{{ path('app_technique_edit', {'id': technique.id}) }}">Modifier</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">Aucune technique pour l'instant.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

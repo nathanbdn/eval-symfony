@@ -1,38 +1,143 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Oeuvre{% endblock %}
+{% block title %}{{ oeuvre.titre }}{% endblock %}
 
 {% block body %}
-    <h1>Oeuvre</h1>
+    <div class="container my-4">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ oeuvre.id }}</td>
-            </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ oeuvre.titre }}</td>
-            </tr>
-            <tr>
-                <th>DateCreation</th>
-                <td>{{ oeuvre.dateCreation ? oeuvre.dateCreation|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ oeuvre.description }}</td>
-            </tr>
-            <tr>
-                <th>DateDestruction</th>
-                <td>{{ oeuvre.dateDestruction ? oeuvre.dateDestruction|date('Y-m-d') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <h1 class="my-3">{{ oeuvre.titre }}</h1>
 
-    <a href="{{ path('app_oeuvre_index') }}">back to list</a>
+        {# --- Galerie photos --- #}
+        {% if oeuvre.photos|length > 0 %}
+            {% set photos = oeuvre.photos|sort((a, b) => b.id <=> a.id) %}
 
-    <a href="{{ path('app_oeuvre_edit', {'id': oeuvre.id}) }}">edit</a>
+            <h2 class="mb-3">Galerie photos</h2>
 
-    {{ include('oeuvre/_delete_form.html.twig') }}
+            <div class="row g-4 mb-5">
+                {% for photo in photos %}
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+
+                            <img src="{{ asset('photos/' ~ photo.nomFichier) }}"
+                                 alt="Photo de {{ oeuvre.titre }}"
+                                 class="card-img-top"
+                                 style="height: 250px; object-fit: cover;">
+
+                            <div class="card-body">
+                                <p class="card-title fw-bold mb-2">
+                                    Photo du {{ photo.datePriseVue|date('d/m/Y') }}
+                                </p>
+
+                                {% if photo.etatOeuvre %}
+                                    <p class="card-text text-muted mb-1">
+                                        État : {{ photo.etatOeuvre }}
+                                    </p>
+                                {% endif %}
+
+                                {% if photo.benevole %}
+                                    <p class="card-text text-muted small mb-0">
+                                        Par {{ photo.benevole.prenom }} {{ photo.benevole.nom }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-secondary">
+                Aucune photo disponible pour cette œuvre.
+            </div>
+        {% endif %}
+
+        {# --- Informations --- #}
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+
+                <h2 class="mb-3">Informations sur l'œuvre</h2>
+
+                {% if oeuvre.dateDestruction %}
+                    <div class="alert alert-warning">
+                        Œuvre détruite le {{ oeuvre.dateDestruction|date('d/m/Y') }}
+                    </div>
+                {% endif %}
+
+                {% if oeuvre.description %}
+                    <p>{{ oeuvre.description|nl2br }}</p>
+                {% endif %}
+
+                <ul class="list-unstyled">
+
+                    <li class="mb-3">
+                        <strong>Création :</strong>
+                        {{ oeuvre.dateCreation ? oeuvre.dateCreation|date('d/m/Y') : 'Date inconnue' }}
+                    </li>
+
+                    <li class="mb-3">
+                        <strong>Artiste(s) :</strong>
+                        {% for artiste in oeuvre.artistes %}
+                        <a href="{{ path('app_artiste_show', {'id': artiste.id}) }}">
+                            {{ artiste.pseudonyme }}
+                            </a>{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            Inconnu
+                        {% endfor %}
+                    </li>
+
+                    <li class="mb-3">
+                        <strong>Technique(s) :</strong>
+                        {{ oeuvre.techniques|length > 0 ? oeuvre.techniques|join(', ') : 'Non renseignée' }}
+                    </li>
+
+                    <li class="mb-3">
+                        <strong>Lieu :</strong>
+                        <a href="{{ path('app_lieu_show', {'id': oeuvre.lieu.id}) }}">
+                            {{ oeuvre.lieu.nom }}
+                        </a>
+                        <br>
+                        <span class="text-muted">
+                            {{ oeuvre.lieu.adresse }}
+                            {% if oeuvre.lieu.quartier %}
+                                ({{ oeuvre.lieu.quartier }})
+                            {% endif %}
+                        </span>
+                    </li>
+
+                    {% if oeuvre.recouvre %}
+                        <li class="mb-3">
+                            <strong>Recouvre :</strong>
+                            <a href="{{ path('app_oeuvre_show', {'id': oeuvre.recouvre.id}) }}">
+                                {{ oeuvre.recouvre.titre }}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% if oeuvre.recouvertPar %}
+                        <li class="mb-3">
+                            <strong>Recouverte par :</strong>
+                            <a href="{{ path('app_oeuvre_show', {'id': oeuvre.recouvertPar.id}) }}">
+                                {{ oeuvre.recouvertPar.titre }}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+
+                {% if is_granted('ROLE_USER') %}
+                    <a class="btn btn-warning mt-3"
+                       href="{{ path('app_oeuvre_edit', {'id': oeuvre.id}) }}">
+                        Modifier l'œuvre
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <a class="btn btn-primary" href="{{ path('app_oeuvre_index') }}">
+            Retour aux œuvres
+        </a>
+
+    </div>
 {% endblock %}
+

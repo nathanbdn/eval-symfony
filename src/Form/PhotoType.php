@@ -31,8 +31,9 @@ class PhotoType extends AbstractType
             ])
             ->add('etatOeuvre')
             ->add('ooeuvre', EntityType::class, [
+                'label' => 'Oeuvre',
                 'class' => Oeuvre::class,
-                'choice_label' => 'id',
+                'choice_label' => 'titre',
             ])
         ;
     }

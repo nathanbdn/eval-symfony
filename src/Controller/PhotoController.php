@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/photo')]
 final class PhotoController extends AbstractController
 {
@@ -23,6 +23,7 @@ final class PhotoController extends AbstractController
     }
 
     #[Route('/new', name: 'app_photo_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $photo = new Photo();
@@ -62,6 +63,7 @@ final class PhotoController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_photo_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Photo $photo, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(PhotoType::class, $photo);
@@ -80,6 +82,7 @@ final class PhotoController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_photo_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Photo $photo, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$photo->getId(), $request->getPayload()->getString('_token'))) {
